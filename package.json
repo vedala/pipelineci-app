@@ -8,5 +8,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/app": "github:octokit/app",
+    "dotenv": "^16.4.5"
+  }
 }
