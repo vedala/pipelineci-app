@@ -25,7 +25,7 @@ const messageForNewPRs = "Thank you from pipelineci2024 for opening a new PR!";
 async function handlePullRequestOpened({ octokit, payload }) {
   console.log(`Received a pull request event for #${payload.pull_request.number}`);
   try {
-    await octokit.request("POST ", {
+    await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
       owner: payload.repository.owner.login,
       repo: payload.repository.name,
       issue_number: payload.pull_request.number,
