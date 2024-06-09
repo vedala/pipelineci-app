@@ -1,13 +1,16 @@
 import dotenv from "dotenv";
 import { App } from "octokit";
 import { createNodeMiddleware } from "octokit";
+import fs from "fs";
 import http from "http";
 
 dotenv.config();
 
 const appId = process.env.GITHUB_APP_IDENTIFIER;
 const webhookSecret = process.env.WEBHOOK_SECRET;
-const privateKey = process.env.PRIVATE_KEY;
+const privateKeyPath = process.env.PRIVATE_KEY_PATH;
+
+const privateKey = fs.readFileSync(privateKeyPath, "utf8");
 
 const app = new App({
   appId: appId,
