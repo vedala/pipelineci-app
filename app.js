@@ -6,11 +6,15 @@ import http from "http";
 dotenv.config();
 
 const appId = process.env.GITHUB_APP_IDENTIFIER;
+const webhookSecret = process.env.WEBHOOK_SECRET;
 const privateKey = process.env.PRIVATE_KEY;
 
 const app = new App({
   appId: appId,
-  privateKey: privateKey
+  privateKey: privateKey,
+  webhooks: {
+    secret: webhookSecret
+  },
 });
 
 const messageForNewPRs = "Thank you from pipelineci2024 for opening a new PR!";
