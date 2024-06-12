@@ -42,8 +42,14 @@ async function handlePullRequestOpened({ octokit, payload }) {
   }
 };
 
+async function handleCheckSuiteRequested({ octokit, payload }) {
+  console.log("Received a check_suite request event");
+  console.log("payload=", payload);
+};
+
 app.webhooks.on("pull_request.opened", handlePullRequestOpened);
 
+app.webhooks.on("check_suite.requested", handleCheckSuiteRequested);
 app.webhooks.onError((error) => {
   if (error.name === "AggregateError") {
     console.error(`Error processing request: ${error.event}`);
@@ -58,6 +64,7 @@ const path = "/api/gh_events";
 const localWebhookUrl = `http://${host}:${port}${path}`;
 
 const middleware = createNodeMiddleware(app.webhooks, {path});
+
 
 http.createServer(middleware).listen(port, () => {
   console.log(`Server is listening for events at: ${localWebhookUrl}`);
