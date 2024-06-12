@@ -44,6 +44,7 @@ async function handlePullRequestOpened({ octokit, payload }) {
 
 async function handleCheckSuiteRequested({ octokit, payload }) {
   console.log("Received a check_suite request event");
+  console.log("payload=", payload);
 };
 
 app.webhooks.on("pull_request.opened", handlePullRequestOpened);
