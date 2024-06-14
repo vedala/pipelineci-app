@@ -34,6 +34,19 @@ async function handlePullRequestOpened({ octokit, payload }) {
         "x-github-api-version": "2022-11-28",
       },
     });
+
+    await octokit.request("POST /repos/{owner}/{repo}/statuses/{sha}", {
+      owner: payload.repository.owner.login,
+      repo: payload.repository.name,
+      sha: payload.pull_request.head.sha,
+      state: 'success',
+      target_url: 'https://example.com/build/status',
+      description: 'Description from app.js',
+      context: 'ci-update/status-update',
+      headers: {
+        "x-github-api-version": "2022-11-28",
+      },
+    });
   } catch (error) {
     if (error.response) {
       console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
@@ -44,28 +57,10 @@ async function handlePullRequestOpened({ octokit, payload }) {
 
 async function handleCheckSuiteRequested({ octokit, payload }) {
   console.log("Received a check_suite request event");
-  console.log("payload=", payload);
-  await octokit.request("POST /repos/{owner}/{repo}/check-runs", {
-    owner: payload.repository.owner.login,
-    name: 'mightly_readme',
-    head_sha: payload.check_suite.head_sha,
-    status: 'in_progress',
-    external_id: '222',
-    started_at: new Date(),
-    output: {
-      title: 'My mighty report',
-      summary: '',
-      text: ''
-    },
-    headers: {
-      "x-github-api-version": "2022-11-28",
-    },
-  });
 };
 
 app.webhooks.on("pull_request.opened", handlePullRequestOpened);
 
-app.webhooks.on("check_suite.requested", handleCheckSuiteRequested);
 app.webhooks.onError((error) => {
   if (error.name === "AggregateError") {
     console.error(`Error processing request: ${error.event}`);
