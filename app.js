@@ -44,8 +44,13 @@ async function handlePullRequestOpened({ octokit, payload }) {
     let ciCheckStatus;
     await axios.post(`${ciRunnerUrl}/run_ci`)
       .then((response) => {
-        console.log("Checks were successful.");
-        ciCheckStatus = "success";
+        if (response.status === 202) {
+          console.log("Checks returned with 202, failure");
+          ciCheckStatus = "failure";
+        } else {
+          console.log("Checks were successful.");
+          ciCheckStatus = "success";
+        }
       })
       .catch((error) => {
         console.log("Checks returned with error");
