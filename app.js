@@ -3,12 +3,14 @@ import { App } from "octokit";
 import { createNodeMiddleware } from "@octokit/webhooks";
 import fs from "fs";
 import http from "http";
+import axios from "axios";
 
 dotenv.config();
 
 const appId = process.env.GITHUB_APP_IDENTIFIER;
 const webhookSecret = process.env.WEBHOOK_SECRET;
 const privateKeyPath = process.env.PRIVATE_KEY_PATH;
+const ciRunnerUrl = process.env.CI_RUNNER_URL;
 
 const privateKey = fs.readFileSync(privateKeyPath, "utf8");
 
@@ -35,11 +37,31 @@ async function handlePullRequestOpened({ octokit, payload }) {
       },
     });
 
+    //
+    // Run CI runner
+    //
+
+    let ciCheckStatus;
+    await axios.post(`${ciRunnerUrl}/run_ci`)
+      .then((response) => {
+        if (response.status === 202) {
+          console.log("Checks returned with 202, failure");
+          ciCheckStatus = "failure";
+        } else {
+          console.log("Checks were successful.");
+          ciCheckStatus = "success";
+        }
+      })
+      .catch((error) => {
+        console.log("Checks returned with error");
+        ciCheckStatus = "failure";
+      });
+
     await octokit.request("POST /repos/{owner}/{repo}/statuses/{sha}", {
       owner: payload.repository.owner.login,
       repo: payload.repository.name,
       sha: payload.pull_request.head.sha,
-      state: 'success',
+      state: ciCheckStatus,
       target_url: 'https://example.com/build/status',
       description: 'Description from app.js',
       context: 'ci-update/status-update',
