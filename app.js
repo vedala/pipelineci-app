@@ -4,7 +4,6 @@ import { createNodeMiddleware } from "@octokit/webhooks";
 import fs from "fs";
 import http from "http";
 import axios from "axios";
-import jwt from "jsonwebtoken";
 
 dotenv.config();
 
@@ -37,20 +36,6 @@ async function handlePullRequestOpened({ octokit, payload }) {
         "x-github-api-version": "2022-11-28",
       },
     });
-
-    //
-    // get installation token
-    //
-
-    const generateJWT = () => {
-      const payload = {
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + (10 * 60),
-        iss: appId
-      };
-
-      return jwt.sign(payload, privateKey, { algorithm: 'RS256' });
-    };
 
     //
     // Run CI runner
