@@ -47,7 +47,7 @@ async function handlePullRequestOpened({ octokit, payload }) {
 
     let ciCheckStatus;
     await axios.post(`${ciRunnerUrl}/run_ci`, {
-      octokit: octokit,
+      payload: payload,
       token: installationAuthObject.token
     }, {
       headers: {
