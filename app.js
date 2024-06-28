@@ -37,9 +37,9 @@ async function handlePullRequestOpened({ octokit, payload }) {
       },
     });
 
-  const installationAuthObject = await octokit.auth({
-    type: 'installation'
-  });
+    const installationAuthObject = await octokit.auth({
+      type: 'installation'
+    });
 
     //
     // Run CI runner
@@ -47,21 +47,16 @@ async function handlePullRequestOpened({ octokit, payload }) {
 
     let ciCheckStatus;
     await axios.post(`${ciRunnerUrl}/run_ci`, {
-      payload: payload,
-      token: installationAuthObject.token
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((response) => {
-        if (response.status === 202) {
-          console.log("Checks returned with 202, failure");
-          ciCheckStatus = "failure";
-        } else {
-          console.log("Checks were successful.");
-          ciCheckStatus = "success";
+        payload: payload,
+        token: installationAuthObject.token
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
         }
+      })
+      .then((response) => {
+        console.log("Request submitted");
+        ciCheckStatus = "pending";
       })
       .catch((error) => {
         console.log("Checks returned with error");
