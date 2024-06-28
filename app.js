@@ -45,6 +45,19 @@ async function handlePullRequestOpened({ octokit, payload }) {
     // Run CI runner
     //
 
+    await octokit.request("POST /repos/{owner}/{repo}/statuses/{sha}", {
+      owner: payload.repository.owner.login,
+      repo: payload.repository.name,
+      sha: payload.pull_request.head.sha,
+      state: "pending",
+      target_url: 'https://example.com/build/status',
+      description: 'Description from app.js',
+      context: 'ci-update/status-update',
+      headers: {
+        "x-github-api-version": "2022-11-28",
+      },
+    });
+
     let ciCheckStatus;
     await axios.post(`${ciRunnerUrl}/run_ci`, {
         payload: payload,
@@ -63,18 +76,6 @@ async function handlePullRequestOpened({ octokit, payload }) {
         ciCheckStatus = "failure";
       });
 
-    await octokit.request("POST /repos/{owner}/{repo}/statuses/{sha}", {
-      owner: payload.repository.owner.login,
-      repo: payload.repository.name,
-      sha: payload.pull_request.head.sha,
-      state: ciCheckStatus,
-      target_url: 'https://example.com/build/status',
-      description: 'Description from app.js',
-      context: 'ci-update/status-update',
-      headers: {
-        "x-github-api-version": "2022-11-28",
-      },
-    });
   } catch (error) {
     if (error.response) {
       console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
