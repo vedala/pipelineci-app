@@ -35,10 +35,9 @@ Steps:
 * Navigate to repo root.
 * Setup `.env` file using env.example as template
 * issue following command:
-
-```
-npm start
-```
+  ```
+  npm start
+  ```
 
 
 ### Backend
@@ -50,10 +49,9 @@ Use repo `pipelineci-backend`. Navigate to repo
   * Run `node createTableOrganizations.js`
   * Repeat for `createTableAuthorizedRepos.js` and `createTableProjects.js`
 * Run backend
-
-```
-npm start
-```
+  ```
+  npm start
+  ```
 
 
 ### Ngrok tunnel to receive callback from GitHub app
