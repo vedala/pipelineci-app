@@ -1,11 +1,9 @@
-import dotenv from "dotenv";
+import "./config.js";
 import { App } from "octokit";
 import { createNodeMiddleware } from "@octokit/webhooks";
 import fs from "fs";
 import http from "http";
 import axios from "axios";
-
-dotenv.config();
 
 const port = process.env.PORT;
 const appId = process.env.GITHUB_APP_IDENTIFIER;
