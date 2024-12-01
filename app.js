@@ -7,6 +7,7 @@ import axios from "axios";
 
 dotenv.config();
 
+const port = process.env.PORT;
 const appId = process.env.GITHUB_APP_IDENTIFIER;
 const webhookSecret = process.env.WEBHOOK_SECRET;
 const privateKeyPath = process.env.PRIVATE_KEY_PATH;
@@ -98,15 +99,11 @@ app.webhooks.onError((error) => {
   }
 });
 
-const port = 3000;
-const host = "localhost";
 const path = "/api/gh_events";
-const localWebhookUrl = `http://${host}:${port}${path}`;
 
 const middleware = createNodeMiddleware(app.webhooks, {path});
 
-
 http.createServer(middleware).listen(port, () => {
-  console.log(`Server is listening for events at: ${localWebhookUrl}`);
+  console.log(`Server is listening for events at path "${path}", port ${port}.`);
   console.log('Press Ctrl + C to quit.');
 });
