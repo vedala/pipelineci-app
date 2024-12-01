@@ -1,21 +1,18 @@
 import "./config.js";
 import { App } from "octokit";
 import { createNodeMiddleware } from "@octokit/webhooks";
-import fs from "fs";
 import http from "http";
 import axios from "axios";
 
 const port = process.env.PORT;
 const appId = process.env.GITHUB_APP_IDENTIFIER;
 const webhookSecret = process.env.WEBHOOK_SECRET;
-const privateKeyPath = process.env.PRIVATE_KEY_PATH;
+const privateKey = process.env.GITHUB_APP_PRIVATE_KEY;
 const ciRunnerUrl = process.env.CI_RUNNER_URL;
 
-const privateKey = fs.readFileSync(privateKeyPath, "utf8");
-
 const app = new App({
-  appId: appId,
-  privateKey: privateKey,
+  appId,
+  privateKey,
   webhooks: {
     secret: webhookSecret
   },
