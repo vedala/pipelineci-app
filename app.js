@@ -54,23 +54,23 @@ async function handlePullRequestOpened({ octokit, payload }) {
       },
     });
 
-    let ciCheckStatus;
-    await axios.post(`${ciRunnerUrl}/run_ci`, {
-        payload: payload,
-        token: installationAuthObject.token
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then((response) => {
-        console.log("Request submitted");
-        ciCheckStatus = "pending";
-      })
-      .catch((error) => {
-        console.log("Checks returned with error");
-        ciCheckStatus = "failure";
-      });
+    // let ciCheckStatus;
+    // await axios.post(`${ciRunnerUrl}/run_ci`, {
+    //     payload: payload,
+    //     token: installationAuthObject.token
+    //   }, {
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   })
+    //   .then((response) => {
+    //     console.log("Request submitted");
+    //     ciCheckStatus = "pending";
+    //   })
+    //   .catch((error) => {
+    //     console.log("Checks returned with error");
+    //     ciCheckStatus = "failure";
+    //   });
 
   } catch (error) {
     if (error.response) {
