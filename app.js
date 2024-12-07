@@ -10,15 +10,6 @@ const webhookSecret = process.env.WEBHOOK_SECRET;
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY;
 const ciRunnerUrl = process.env.CI_RUNNER_URL;
 
-const healthCheckMiddleware = async (req, res, next) => {
-  if (req.url === "/health" && req.method === "GET") {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end("Backend is alive!");
-  }
-
-  next();
-}
-
 const app = new App({
   appId,
   privateKey,
@@ -107,32 +98,16 @@ const path = "/api/gh_events";
 
 const webhooksMiddleware = createNodeMiddleware(app.webhooks, {path});
 
-const combinedMiddleware = (req, res, next) => {
-  const stack = [healthCheckMiddleware, webhooksMiddleware];
-  let index = 0;
+const server = http.createServer(async (req, res) => {
+  if (req.url === "/health" && req.method === "GET") {
+    res.writeHead(200);
+    res.end("Healthy!");
+  }
 
-  const runner = async () => {
-    if (index < stack.length) {
-      const current = stack[index];
-      index++;
-      await current(req, res, runner);
-    } else {
-      next();
-    }
-  };
+  if (await webhooksMiddleware(req, res)) return;
 
-  runner().catch((err) => {
-    console.error(err);
-    res.statusCode = 500;
-    res.end("Internal Server Error in runner");
-  });
-};
-
-const server = http.createServer((req, res) => {
-  combinedMiddleware(req, res, () => {
-    res.statusCode = 404;
-    res.end("Not Found");
-  });
+  res.writeHead(404);
+  res.end("Not Found");
 });
 
 server.listen(port, () => {
