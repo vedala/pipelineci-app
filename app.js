@@ -111,6 +111,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Server is listening for events at path "${path}", port ${port}.`);
+  console.log(`Server is listening on port ${port}. Events path "${path}".`);
   console.log('Press Ctrl + C to quit.');
 });
