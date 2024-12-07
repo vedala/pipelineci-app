@@ -100,6 +100,7 @@ const webhooksMiddleware = createNodeMiddleware(app.webhooks, {path});
 
 const server = http.createServer(async (req, res) => {
   if (req.url === "/health" && req.method === "GET") {
+    console.log("Health check endpoint request");
     res.writeHead(200);
     res.end("Healthy!");
   }
