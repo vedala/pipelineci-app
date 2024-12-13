@@ -3,12 +3,15 @@ import { App } from "octokit";
 import { createNodeMiddleware } from "@octokit/webhooks";
 import http from "http";
 import axios from "axios";
+import { SQSClient, SendMessageCommand, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
 
 const port = process.env.PORT;
 const appId = process.env.GITHUB_APP_IDENTIFIER;
 const webhookSecret = process.env.WEBHOOK_SECRET;
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY;
+const awsRegion = process.env.AWS_REGION;
 const ciRunnerUrl = process.env.CI_RUNNER_URL;
+const sqsQueueUrl = process.env.SQS_QUEUE_URL;
 
 const app = new App({
   appId,
@@ -54,6 +57,10 @@ async function handlePullRequestOpened({ octokit, payload }) {
       },
     });
 
+    const payloadForRunner = "";
+
+    await sendRequestToRunner(payloadForRunner);
+
     // let ciCheckStatus;
     // await axios.post(`${ciRunnerUrl}/run_ci`, {
     //     payload: payload,
@@ -79,6 +86,23 @@ async function handlePullRequestOpened({ octokit, payload }) {
     console.error(error);
   }
 };
+
+async function sendRequestToRunner(payload) {
+  const sqsClient = new SQSClient({ region: awsRegion });
+
+  const params = {
+    QueueUrl: queueUrl,
+    MessageBody: JSON.stringify(payload),
+  };
+
+  try {
+      const result = await sqsClient.send(new SendMessageCommand(params));
+      console.log('Message sent successfully:', result.MessageId);
+  } catch (error) {
+      console.error('Error sending message:', error);
+  }
+
+}
 
 async function handleCheckSuiteRequested({ octokit, payload }) {
   console.log("Received a check_suite request event");
