@@ -70,7 +70,7 @@ console.log("payload=", payload);
 
     const payloadForRunner = "";
 
-    await sendRequestToRunner(payloadForRunner);
+    // await sendRequestToRunner(payloadForRunner);
 
     // let ciCheckStatus;
     // await axios.post(`${ciRunnerUrl}/run_ci`, {
