@@ -4,6 +4,7 @@ import { createNodeMiddleware } from "@octokit/webhooks";
 import http from "http";
 import axios from "axios";
 import { SQSClient, SendMessageCommand, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
+import getKnexObj from "./knexObj.js";
 
 const port = process.env.PORT;
 const appId = process.env.GITHUB_APP_IDENTIFIER;
@@ -12,6 +13,8 @@ const privateKey = process.env.GITHUB_APP_PRIVATE_KEY;
 const awsRegion = process.env.AWS_REGION;
 const ciRunnerUrl = process.env.CI_RUNNER_URL;
 const sqsQueueUrl = process.env.SQS_QUEUE_URL;
+
+const knex = getKnexObj();
 
 const app = new App({
   appId,
@@ -24,6 +27,7 @@ const app = new App({
 const messageForNewPRs = "Thank you from pipelineci2024 for opening a new PR!";
 
 async function handlePullRequestOpened({ octokit, payload }) {
+console.log("payload=", payload);
   console.log(`Received a pull request event for #${payload.pull_request.number}`);
   try {
     await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
@@ -40,10 +44,6 @@ async function handlePullRequestOpened({ octokit, payload }) {
       type: 'installation'
     });
 
-    //
-    // Run CI runner
-    //
-
     await octokit.request("POST /repos/{owner}/{repo}/statuses/{sha}", {
       owner: payload.repository.owner.login,
       repo: payload.repository.name,
@@ -56,6 +56,17 @@ async function handlePullRequestOpened({ octokit, payload }) {
         "x-github-api-version": "2022-11-28",
       },
     });
+
+    const owner  = payload.repository.owner.login;
+    const repo   = payload.repository.name;
+    const sha    = payload.pull_request.head.sha;
+    const branch = payload.pull_request.head.ref;
+
+    try {
+      await insertRunsTable(owner, repo, sha, branch);
+    } catch (error) {
+      console.error('Error updating runs table:', error);
+    }
 
     const payloadForRunner = "";
 
@@ -102,6 +113,46 @@ async function sendRequestToRunner(payload) {
       console.error('Error sending message:', error);
   }
 
+}
+
+const insertRunsTable = async (owner, repo, sha, branch) => {
+  //
+  // fetch org id from organizations based on owner
+  //
+  const selectOrgResponse = await knex(process.env.ORGANIZATIONS_TABLE_NAME)
+    .select('id')
+    .where('owner', '=', owner)
+    .where('git_provider', '=', 'GITHUB')
+    .catch((err) => { console.error(err); throw err; });
+
+  console.log("selectOrgResponse=", selectOrgResponse);
+  const organizationId = selectOrgResponse[0];
+
+  //
+  // fetch project id from projects based on organization_id and repo
+  //
+  const selectProjectsResponse = await knex(process.env.PROJECTS_TABLE_NAME)
+    .select('id')
+    .where('repo', '=', repo)
+    .where('organization_id', '=', organizationId)
+    .catch((err) => { console.error(err); throw err; });
+
+  console.log("selectProjectsResponse=", selectProjectsResponse);
+  const projectId = selectProjectsResponse[0];
+
+  //
+  // insert runs table, update columns sha, branch based on project_id
+  //
+  const insertRunsResponse = await knex(process.env.RUNS_TABLE_NAME)
+    .insert({
+      project_id: projectId,
+      sha,
+      branch,
+    })
+    .returning('id')
+    .catch((err) => { console.error(err); throw err });
+
+  console.log("insertRunsResponse=", insertRunsResponse);
 }
 
 async function handleCheckSuiteRequested({ octokit, payload }) {
