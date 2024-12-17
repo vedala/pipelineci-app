@@ -40,10 +40,6 @@ async function handlePullRequestOpened({ octokit, payload }) {
       type: 'installation'
     });
 
-    //
-    // Run CI runner
-    //
-
     await octokit.request("POST /repos/{owner}/{repo}/statuses/{sha}", {
       owner: payload.repository.owner.login,
       repo: payload.repository.name,
@@ -56,6 +52,12 @@ async function handlePullRequestOpened({ octokit, payload }) {
         "x-github-api-version": "2022-11-28",
       },
     });
+
+    try {
+      await updateRunsTable(owner, repo);
+    } catch (error) {
+      console.error('Error updating runs table:', error);
+    }
 
     const payloadForRunner = "";
 
@@ -102,6 +104,12 @@ async function sendRequestToRunner(payload) {
       console.error('Error sending message:', error);
   }
 
+}
+
+const updateRunsTable = async (owner, repo) => {
+  // fetch org id from organizations based on owner
+  // fetch project id from projects based on organization_id and repo
+  // update runs table, update columns sha, branch based on project_id
 }
 
 async function handleCheckSuiteRequested({ octokit, payload }) {
