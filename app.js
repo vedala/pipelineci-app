@@ -70,7 +70,7 @@ console.log("payload=", payload);
 
     const payloadForRunner = "";
 
-    await sendRequestToRunner(payloadForRunner);
+    // await sendRequestToRunner(payloadForRunner);
 
     // let ciCheckStatus;
     // await axios.post(`${ciRunnerUrl}/run_ci`, {
@@ -126,7 +126,7 @@ const insertRunsTable = async (owner, repo, sha, branch) => {
     .catch((err) => { console.error(err); throw err; });
 
   console.log("selectOrgResponse=", selectOrgResponse);
-  const organizationId = selectOrgResponse[0];
+  const organizationId = selectOrgResponse[0].id;
 
   //
   // fetch project id from projects based on organization_id and repo
@@ -138,7 +138,7 @@ const insertRunsTable = async (owner, repo, sha, branch) => {
     .catch((err) => { console.error(err); throw err; });
 
   console.log("selectProjectsResponse=", selectProjectsResponse);
-  const projectId = selectProjectsResponse[0];
+  const projectId = selectProjectsResponse[0].id;
 
   //
   // insert runs table, update columns sha, branch based on project_id
