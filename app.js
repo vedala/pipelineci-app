@@ -57,10 +57,11 @@ console.log("payload=", payload);
       },
     });
 
-    const owner  = payload.repository.owner.login;
-    const repo   = payload.repository.name;
-    const sha    = payload.pull_request.head.sha;
-    const branch = payload.pull_request.head.ref;
+    const installationId = payload.installation.id;
+    const owner          = payload.repository.owner.login;
+    const repo           = payload.repository.name;
+    const sha            = payload.pull_request.head.sha;
+    const branch         = payload.pull_request.head.ref;
 
     try {
       await insertRunsTable(owner, repo, sha, branch);
@@ -68,9 +69,14 @@ console.log("payload=", payload);
       console.error('Error updating runs table:', error);
     }
 
-    const payloadForRunner = "";
+    const payloadForRunner = JSON.stringify({
+      installationId,
+      branch,
+      repoOwner: owner,
+      repoToClone: repo,
+    });
 
-    // await sendRequestToRunner(payloadForRunner);
+    await sendRequestToRunner(payloadForRunner);
 
     // let ciCheckStatus;
     // await axios.post(`${ciRunnerUrl}/run_ci`, {
@@ -102,7 +108,7 @@ async function sendRequestToRunner(payload) {
   const sqsClient = new SQSClient({ region: awsRegion });
 
   const params = {
-    QueueUrl: queueUrl,
+    QueueUrl: sqsQueueUrl,
     MessageBody: JSON.stringify(payload),
   };
 
