@@ -3,7 +3,7 @@ import { App } from "octokit";
 import { createNodeMiddleware } from "@octokit/webhooks";
 import http from "http";
 import axios from "axios";
-import { SQSClient, SendMessageCommand, ReceiveMessageCommand } from "@aws-sdk/client-sqs";
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import getKnexObj from "./knexObj.js";
 
 const port = process.env.PORT;
