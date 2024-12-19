@@ -3,7 +3,7 @@ import { App } from "octokit";
 import { createNodeMiddleware } from "@octokit/webhooks";
 import http from "http";
 import axios from "axios";
-import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 import getKnexObj from "./knexObj.js";
 
 const port = process.env.PORT;
@@ -105,16 +105,18 @@ console.log("payload=", payload);
 };
 
 async function sendRequestToRunner(payload) {
-  const sqsClient = new SQSClient({ region: awsRegion });
+  const snsClient = new SNSClient({ region: awsRegion });
 
   const params = {
-    QueueUrl: sqsQueueUrl,
-    MessageBody: JSON.stringify(payload),
+    TopicArn: snsTopicArn,
+    Message: JSON.stringify(payload),
+    Subject: "Run CI request",
   };
 
   try {
-      const result = await sqsClient.send(new SendMessageCommand(params));
-      console.log('Message sent successfully:', result.MessageId);
+    const command = new PublishCommand(params);
+    const result = await snsClient.send(command);
+    console.log('Message sent successfully:', result);
   } catch (error) {
       console.error('Error sending message:', error);
   }
