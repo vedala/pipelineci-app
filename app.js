@@ -108,7 +108,7 @@ async function sendRequestToRunner(payload) {
 
   const params = {
     TopicArn: snsTopicArn,
-    Message: JSON.stringify(payload),
+    Message: payload,
     Subject: "Run CI request",
   };
 
