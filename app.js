@@ -11,8 +11,7 @@ const appId = process.env.GITHUB_APP_IDENTIFIER;
 const webhookSecret = process.env.WEBHOOK_SECRET;
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY;
 const awsRegion = process.env.AWS_REGION;
-const ciRunnerUrl = process.env.CI_RUNNER_URL;
-const sqsQueueUrl = process.env.SQS_QUEUE_URL;
+const snsTopicArn = process.env.SNS_TOPIC_ARN;
 
 const knex = getKnexObj();
 
