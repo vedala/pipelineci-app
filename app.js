@@ -78,24 +78,6 @@ console.log("payload=", payload);
 
     await sendRequestToRunner(payloadForRunner);
 
-    // let ciCheckStatus;
-    // await axios.post(`${ciRunnerUrl}/run_ci`, {
-    //     payload: payload,
-    //     token: installationAuthObject.token
-    //   }, {
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     }
-    //   })
-    //   .then((response) => {
-    //     console.log("Request submitted");
-    //     ciCheckStatus = "pending";
-    //   })
-    //   .catch((error) => {
-    //     console.log("Checks returned with error");
-    //     ciCheckStatus = "failure";
-    //   });
-
   } catch (error) {
     if (error.response) {
       console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`);
