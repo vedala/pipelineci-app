@@ -71,6 +71,7 @@ console.log("payload=", payload);
     const payloadForRunner = JSON.stringify({
       installationId,
       branch,
+      sha,
       repoOwner: owner,
       repoToClone: repo,
     });
