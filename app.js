@@ -26,7 +26,6 @@ const app = new App({
 const messageForNewPRs = "Thank you from pipelineci2024 for opening a new PR!";
 
 async function handlePullRequestOpened({ octokit, payload }) {
-console.log("payload=", payload);
   console.log(`Received a pull request event for #${payload.pull_request.number}`);
   try {
     await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
@@ -62,11 +61,13 @@ console.log("payload=", payload);
     const sha            = payload.pull_request.head.sha;
     const branch         = payload.pull_request.head.ref;
 
+    console.log("Before calling insertRunsTable");
     try {
       await insertRunsTable(owner, repo, sha, branch);
     } catch (error) {
       console.error('Error updating runs table:', error);
     }
+    console.log("After insertRunsTable try/catch");
 
     const payloadForRunner = JSON.stringify({
       installationId,
@@ -76,6 +77,7 @@ console.log("payload=", payload);
       repoToClone: repo,
     });
 
+    console.log("Before calling sendRequestToRunner");
     await sendRequestToRunner(payloadForRunner);
 
   } catch (error) {
@@ -165,7 +167,6 @@ const webhooksMiddleware = createNodeMiddleware(app.webhooks, {path});
 
 const server = http.createServer(async (req, res) => {
   if (req.url === "/health" && req.method === "GET") {
-    console.log("Health check endpoint request");
     res.writeHead(200);
     res.end("Healthy!");
   }
