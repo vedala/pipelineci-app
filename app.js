@@ -61,11 +61,13 @@ async function handlePullRequestOpened({ octokit, payload }) {
     const sha            = payload.pull_request.head.sha;
     const branch         = payload.pull_request.head.ref;
 
+    console.log("Before calling insertRunsTable");
     try {
       await insertRunsTable(owner, repo, sha, branch);
     } catch (error) {
       console.error('Error updating runs table:', error);
     }
+    console.log("After insertRunsTable try/catch");
 
     const payloadForRunner = JSON.stringify({
       installationId,
@@ -75,6 +77,7 @@ async function handlePullRequestOpened({ octokit, payload }) {
       repoToClone: repo,
     });
 
+    console.log("Before calling sendRequestToRunner");
     await sendRequestToRunner(payloadForRunner);
 
   } catch (error) {
