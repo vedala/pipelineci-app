@@ -108,6 +108,9 @@ async function sendRequestToRunner(payload) {
 }
 
 const insertRunsTable = async (owner, repo, sha, branch) => {
+
+  console.log(`In insertRunsTable, owner=${owner}, repo=${repo}, sha=${sha}, branch=${branch}`);
+
   //
   // fetch org id from organizations based on owner
   //
@@ -115,7 +118,10 @@ const insertRunsTable = async (owner, repo, sha, branch) => {
     .select('id')
     .where('owner', '=', owner)
     .where('git_provider', '=', 'GITHUB')
-    .catch((err) => { console.error(err); throw err; });
+    .catch((err) => {
+      console.error(`Error in select organizations: ${err}`);
+      throw err;
+    });
 
   console.log("selectOrgResponse=", selectOrgResponse);
   const organizationId = selectOrgResponse[0].id;
