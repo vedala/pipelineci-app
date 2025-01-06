@@ -116,8 +116,9 @@ const insertRunsTable = async (owner, repo, sha, branch) => {
   //
   const selectOrgResponse = await knex(process.env.ORGANIZATIONS_TABLE_NAME)
     .select('id')
-    .where('owner', '=', owner)
-    .where('git_provider', '=', 'GITHUB')
+    .where('owner', owner)
+    .where('git_provider', 'GITHUB')
+    .debug()
     .catch((err) => {
       console.error(`Error in select organizations: ${err}`);
       throw err;
