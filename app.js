@@ -111,6 +111,7 @@ const insertRunsTable = async (owner, repo, sha, branch) => {
 
   console.log(`In insertRunsTable, owner=${owner}, repo=${repo}, sha=${sha}, branch=${branch}`);
 
+  console.log(`In insertRunsTable: orgs-table=${process.env.ORGANIZATIONS_TABLE_NAME}, NODE_ENV=${process.env.NODE_ENV}`);
   //
   // fetch org id from organizations based on owner
   //
