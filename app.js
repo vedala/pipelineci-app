@@ -133,7 +133,7 @@ const insertRunsTable = async (owner, repo, sha, branch) => {
   //
   const selectProjectsResponse = await knex(process.env.PROJECTS_TABLE_NAME)
     .select('id')
-    .where('repo', '=', repo)
+    .where('name', '=', repo)
     .where('organization_id', '=', organizationId)
     .catch((err) => { console.error(err); throw err; });
 
