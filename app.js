@@ -62,14 +62,16 @@ async function handlePullRequestOpened({ octokit, payload }) {
     const branch         = payload.pull_request.head.ref;
 
     console.log("Before calling insertRunsTable");
+    let insertedRunId;
     try {
-      await insertRunsTable(owner, repo, sha, branch);
+      insertedRunId = await insertRunsTable(owner, repo, sha, branch);
     } catch (error) {
       console.error('Error updating runs table:', error);
     }
     console.log("After insertRunsTable try/catch");
 
     const payloadForRunner = JSON.stringify({
+      runId: insertedRunId,
       installationId,
       branch,
       sha,
@@ -153,6 +155,7 @@ const insertRunsTable = async (owner, repo, sha, branch) => {
     .catch((err) => { console.error(err); throw err });
 
   console.log("insertRunsResponse=", insertRunsResponse);
+  return insertRunsResponse[0].id;
 }
 
 async function handleCheckSuiteRequested({ octokit, payload }) {
