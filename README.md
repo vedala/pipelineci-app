@@ -8,7 +8,7 @@ GitHub's functionality.
 
 This repo contains one such app. The app's public page is located at (pipelineci2024)[https://github.com/apps/pipelineci2024].
 
-Currently, the project is setup to run only locally. Deployment code and instructions will follow soon.
+Instructions for running locally are described below. Instructions to deploy to AWS will follow soon.
 
 
 ## Running locally
