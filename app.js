@@ -121,7 +121,7 @@ const insertRunsTable = async (owner, repo, sha, branch) => {
     .select('id')
     .where('owner', owner)
     .where('git_provider', 'GITHUB')
-    .debug()
+    .orderBy('id', 'desc')
     .catch((err) => {
       console.error(`Error in select organizations: ${err}`);
       throw err;
