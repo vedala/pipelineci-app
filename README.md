@@ -14,3 +14,6 @@ Instructions for running locally are described below. Instructions to deploy to 
 ## More information
 
 [Developer's Guide](Developers-Guide.md)
+
+[User's Guide](Users-Guide.md)
+
