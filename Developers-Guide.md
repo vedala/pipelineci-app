@@ -2,6 +2,14 @@
 
 ## Running locally
 
+To run this application locally, following four repos need to run:
+* pipelineci-fe
+* pipelineci-backend
+* pipelineci-app
+* pipelineci-runner
+
+
+### GitHub App
 To create your own GitHub App to use the code in this project, use the following steps:
 * Create a GitHub App
 * Pick a unique name for the app
@@ -17,7 +25,25 @@ To create your own GitHub App to use the code in this project, use the following
     * Add a `smee` url for `Webhook URL`, it will look something line `https://smee.io/SomeRandomString`
     * Create a secret and save it for future use
 
+### Tunnels
 
+Except for the frontend repo, other three repos receive either callbacks from GitHub or AWS. To enable locally running processes receive callbacks from external sources, we need to use tunnels.
+
+We use three tunneling utilities in this application: `ngrok`, `smee` and `localtunnel`.
+
+We can probably use just `localtunnel` for all three tunnel that we use, but that is a topic for future research.
+
+Tunnels used:
+* pipeline-backend: `ngrok`
+* pipelineci-app: `smee`
+* pipelineci-runner: `localtunnel`
+
+pipelineci-backend and pipeline-app receive callbacks from GitHub. pipelineci-runner receives notification from AWS SNS.
+
+
+### AWS SNS
+* Topic
+* Subscription
 
 ### Frontend
 
@@ -83,13 +109,3 @@ ngrok http --url=your-ngrok-string.ngrok-free.app 4001
   ```
   lt --port 4002 --subdomain your-lt-subdomain-name
   ```
-
-### Create and run smee server
-
-Since this repo's code will be running locally, we will need to provide a way for github
-to access the app's endpoints. Similar to `ngrok` above, `smee` webproxy server is another way to forward
-requests from GitHub app to locally running service.
-
-```
-smee -u https://smee.io/yourRandomString -t http://localhost:3000/api/gh_events
-```
