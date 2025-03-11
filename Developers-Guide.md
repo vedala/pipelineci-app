@@ -46,7 +46,7 @@ Use repo `pipelineci-backend`. Navigate to repo
   ```
 
 
-### Ngrok tunnel to receive callback from GitHub app
+#### Ngrok tunnel to receive callback from GitHub app
 
 Run a Ngrok tunnel to receive callbacks from GitHub app. The following command is forwarding to localhost port 4001.
 
@@ -58,9 +58,17 @@ ngrok http --url=your-ngrok-string.ngrok-free.app 4001
 ### pipelineci-app
 
 * Setup `.env` file using `env.example` as template
+* Set `AWS_PROFILE` environment variable.
+  ```
+  export AWS_PROFILE=your-aws-profile-name
+  ```
 * Run server
   ```
-  npm run server
+  npm start
+  ```
+* In another terminal window, start `smee` tunnel
+  ```
+  smee -u https://smee.io/SomeRandomString -t http://localhost:3000/api/gh_events
   ```
 
 
@@ -69,7 +77,11 @@ ngrok http --url=your-ngrok-string.ngrok-free.app 4001
 * Setup `.env` from `env.example`
 * Run server
   ```
-  npm run server
+  npm start
+  ```
+* In another terminal window, start `localtunnel` tunnel to forward requests to `runner`
+  ```
+  lt --port 4002 --subdomain your-lt-subdomain-name
   ```
 
 ### Create and run smee server
