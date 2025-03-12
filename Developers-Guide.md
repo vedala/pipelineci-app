@@ -50,7 +50,7 @@ run CI checks. pipelineci-app notifies pipelineci-runner using AWS SNS service.
 * Topic: topic is a communication channel setup by SNS service
 * Subscription: subscribers to an SNS topic receive messages sent to a topic.
 
-Subscribers can be of many types, we have setup HTTP(S) endpoint
+Subscribers can be of many types, we have setup HTTP(S) endpoint as target of SNS subscription.
 
 ### Frontend
 
