@@ -31,7 +31,7 @@ Except for the frontend repo, other three repos receive either callbacks from Gi
 
 We use three tunneling utilities in this application: `ngrok`, `smee` and `localtunnel`.
 
-We can probably use just `localtunnel` for all three tunnel that we use, but that is a topic for future research.
+We can probably use just `localtunnel` for all three tunnels that we create, but that is a topic for future research.
 
 Tunnels used:
 * pipeline-backend: `ngrok`
@@ -42,8 +42,15 @@ pipelineci-backend and pipeline-app receive callbacks from GitHub. pipelineci-ru
 
 
 ### AWS SNS
-* Topic
-* Subscription
+
+This application uses AWS SNS service to pass messages from pipelineci-app and pipelineci-runner. On pull request creation,
+pipelineci-app receives a callback with pull request information. pipelineci-runner is designed to download the repo and
+run CI checks. pipelineci-app notifies pipelineci-runner using AWS SNS service.
+
+* Topic: topic is a communication channel setup by SNS service
+* Subscription: subscribers to an SNS topic receive messages sent to a topic.
+
+Subscribers can be of many types, we have setup HTTP(S) endpoint
 
 ### Frontend
 
